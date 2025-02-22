@@ -46,14 +46,38 @@ template<u32 P>constexpr u32 mulMod(u32 a, u32 b) { return 1ULL * a * b % P; }
 template<u64 P>constexpr u64 mulMod(u64 a, u64 b) { u64 res = a * b - u64(1.L * a * b / P - 0.5L) * P; res %= P; return res; }
 
 void solve(){
+    int n;
+    cin >> n;
     
+    vector<int> a(n);
+    for(int i = 0; i < n - 2; i ++) cin >> a[i];
+
+    // if(a[0] == 1 || a[n - 1] == 1){
+    //     cout << "NO\n";
+    //     return;
+    // }
+
+    int lasi = -10;
+    for(int i = 0; i < n - 2; i ++){
+        if(a[i] == 1){
+            // lasi = i;
+            if(i - lasi == 2){
+                // cout << i << " " << lasi << "\n";
+                cout << "NO\n";
+                return;
+            }
+            lasi = i;
+            // break;
+        }
+    }
+    cout << "YES\n";
 }
 
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0); cout.tie(0);
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     while(t --){
         solve();

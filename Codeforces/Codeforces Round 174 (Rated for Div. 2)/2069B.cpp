@@ -46,14 +46,50 @@ template<u32 P>constexpr u32 mulMod(u32 a, u32 b) { return 1ULL * a * b % P; }
 template<u64 P>constexpr u64 mulMod(u64 a, u64 b) { u64 res = a * b - u64(1.L * a * b / P - 0.5L) * P; res %= P; return res; }
 
 void solve(){
+    int n, m;
+    cin >> n >> m;
+
+    map<int, int> mp;
+    int mx = 0;
+    vector<vector<int>> a(n, vector<int>(m));
+    for(int i = 0; i < n; i ++){
+        for(int j = 0; j < m; j ++){
+            cin >> a[i][j];
+            mp[a[i][j]] = 1;
+        }
+    }
     
+    int dx[] = {0, 0, 1, -1};
+    int dy[] = {1, -1, 0, 0};
+    for(int i = 0; i < n; i ++){
+        for(int j = 0; j < m; j ++){
+            for(int k = 0; k < 4; k ++){
+                int ni = i + dx[k];
+                int nj = j + dy[k];
+                if(ni >= 0 && ni < n && nj >= 0 && nj < m){
+                    if(a[i][j] == a[ni][nj]){
+                        mp[a[i][j]] = 2;
+                    }
+                }
+            }
+        }
+    }
+
+    int ans = 0;
+    // int mx = 0;
+    for(auto [key, val] : mp){
+        // cout << key << " " << val << "\n";
+        ans += val;
+        mx = max(mx, val);
+    }
+    cout << ans - mx << "\n";
 }
 
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0); cout.tie(0);
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     while(t --){
         solve();

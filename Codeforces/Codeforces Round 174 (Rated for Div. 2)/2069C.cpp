@@ -45,15 +45,36 @@ template<class T>constexpr T inverse(T a, T m) { T x, y; exgcd(a, m, x, y); retu
 template<u32 P>constexpr u32 mulMod(u32 a, u32 b) { return 1ULL * a * b % P; }
 template<u64 P>constexpr u64 mulMod(u64 a, u64 b) { u64 res = a * b - u64(1.L * a * b / P - 0.5L) * P; res %= P; return res; }
 
+const ll N = 998244353;
+
 void solve(){
-    
+    int n;
+    cin >> n;
+
+    vector<int> a(n);
+    for(int i = 0; i < n; i ++) cin >> a[i];
+
+    ll s1 = 0, s2 = 0, s3 = 0;
+    ll ans = 0;
+    for(int i = 0; i < n; i ++){
+        if(a[i] == 1) s1 ++;
+        else if(a[i] == 2){
+            s2 = (s2 * 2 % N + s1) % N;
+            // s1 = 0;
+        }
+        else{
+            ans = (ans + s2) % N; 
+            // s3 ++;
+        }
+    }
+    cout << ans << "\n";
 }
 
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0); cout.tie(0);
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     while(t --){
         solve();
