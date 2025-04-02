@@ -2,14 +2,19 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe 生成活动文件",
-            "command": "D:\\Program Files (x86)\\mingw64\\bin\\g++.exe",
+            "label": "C/C++",
+            // 编译器路径，如果是C++则使用g++.exe，如果是C语言则使用gcc.exe
+            "command": "D:/mingw64/bin/g++.exe",
             "args": [
+                // 输入给终端的参数
                 "-fdiagnostics-color=always",
+                "-std=c++23",
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}/bin/${fileBasenameNoExtension}.exe", //生成exe文件的路径(不支持中文命名C/C++文件)
+                //"${fileDirname}/bin/test.exe",//生成exe文件的路径(支持中文命名C/C++文件)
+                "-fexec-charset=GBK", //编码格式(按照GBK格式输出可以显示中文字符)
             ],
             "options": {
                 "cwd": "${fileDirname}"

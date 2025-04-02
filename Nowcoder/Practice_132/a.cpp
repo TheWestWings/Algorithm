@@ -17,7 +17,7 @@ signed main(){
 
     if(n == 1){
         cout << "0.00" << endl;
-        return;
+        return 0;
     }
     sort(a, a + n);
 

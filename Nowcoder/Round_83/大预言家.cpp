@@ -50,69 +50,125 @@ void solve(){
     int n;
     cin >> n;
 
-    vector<int> s1(n + 1), s2(n + 1);
-    vector<vector<int>> a(2, vector<int>(n + 1));
-    for(int i = 0; i < 2; i ++){
-        for(int j = 1; j <= n; j ++){
-            cin >> a[i][j];
-        }
-    }
-    // cout << a[0]   << endl;
-    for(int i = 1; i <= n; i ++){
-        s1[i] = s1[i - 1] + a[0][i];
-    }
-    for(int i = n; i >= 1; i --){
-        s2[i] = s2[i + 1] + a[1][i];
-    }
-    // cout << s1 << endl;
-    // cout << s2 << endl;
-
-    // int mx = -1e18, mxi = -1;
-    // for(int i = 1; i <= n; i ++){
-    //     // cout << s1[i] + s2[i] << endl;
-    //     if(s1[i] + s2[i] > mx){
-    //         mx = s1[i] + s2[i];
-    //         mxi = i;
-    //     }
+    int t = 1;
+    int cnt = 1;    //cengshu
+    int x = n;
+    // while(x - t * t > 0){
+    //     // x -= t * t;
+    //     t += 2;
+    //     cnt ++;
     // }
-    // cout << mx << " " << mxi << endl;
+    // cout << (int)(sqrt(n)) << endl;
+    int q = (int)sqrt(n);
+    if(q % 2 != 1) q --;
+    if(q * q != n) q += 2;
+    // cout << "q " << q << " t " << t << endl;
+    // cout << "cnt " << cnt << " t " << t << endl;
+    t = q;
 
-    vector<int> mx1(n + 2, -1e18), mx2(n + 2, -1e18);
-    vector<int> mx3(n + 2, -1e18), mx4(n + 2, -1e18);
-    for(int i = 1; i <= n; i ++){
-        // cout << -a[0][i] + a[1][i] << endl;
-        mx1[i] = max(mx1[i - 1], -a[0][i] + a[1][i]);
-        mx3[i] = max(mx3[i - 1], a[1][i]);
-    }
-    for(int i = n; i > 0; i --){
-        // cout << a[0][i] - a[1][i] << endl;
-        mx2[i] = max(mx2[i + 1], a[0][i] - a[1][i]);
-        mx4[i] = max(mx4[i + 1], a[0][i]);
-    }
-    // cout << mx1 << " " << mx2 << endl;
+    int p = t * t;
+    int start_x = (t + 1) / 2 - 1;
+    int start_y = (t + 1) / 2 - 1;
+    // cout << "start_x " << start_x << " start_y " << start_y << " p" << p << endl;
 
-    int ans = -1e18;
+    // if(n >= p - t + 1){
+    //     cout << start_x << " " << start_y - (p - n) << endl;
+    //     return;
+    // }
+    // for(int i = start_x; i >= -start_x; i --){
+    //     if(p == n){
+    //         cout << i << " " << start_y << endl;
+    //         return;
+    //     }
+    //     p --;
+    // }    
+    // cout << "now p1 " << p << endl;
 
-    for(int i = 1; i <= n; i ++){
-        ans = max(ans, s1[i] + s2[i]);
+    // cout << "now p1 " << p << " " << p - t + 1 << endl;
+    if(n >= p - t + 1){
+        cout << start_x - (p - n) << " " << start_y  << endl;
+        return;
     }
 
-    for(int i = 2; i < n; i ++){
-        // ans = max(ans, s1[i] + s2[i]);
-        ans = max(ans, s1[i] + s2[i] + mx1[i - 1] + mx2[i + 1]);
-        ans = max(ans, s1[i] + s2[i] - a[1][i] + mx3[i - 1]);
-        ans = max(ans, s1[i] + s2[i] - a[0][i] + mx4[i + 1]);
+    p -= t - 1;
+    // cout << "now p2 " << p << " " << p - t + 1 << endl;
+    if(n >= p - t + 1){
+        // cout << -start_x << " " << start_y + (p - n) << endl;
+        
+
+        cout << -start_x << " " << start_y - (p - n) << endl;
+        return;
     }
+
+    p -= t - 1;
+    // cout << "now p3 " << p << " " << p - t + 1 << endl;
+    if(n >= p - t + 1){
+        
+
+        cout << -start_x + (p - n) << " " << -start_y << endl;
+        return;
+    }
+
+    p -= t - 1;
+    // cout << "now p4 " << p << " " << p - t + 1 << endl;
+    if(n >= p - t + 1){
+        
+        cout << start_x << " " << -start_y + (p - n) << endl;
+        return;
+    }
+
+
+    // start_x = -start_x;
+    // start_y = start_y;
+
+    // for(int i = start_y - 1; i >= -start_y; i --){
+    //     if(p == n){
+    //         cout << start_x << " " << i << endl;
+    //         return;
+    //     }
+    //     p --;
+
+    // }
+
+    // // cout << "now p2 " << p << endl;
+
+    // start_y = -start_y;
+    // start_x = start_x;
+
+    // for(int i = start_x + 1; i <= -start_x; i ++){
+    //     if(p == n){
+    //         cout << i << " " << start_y << endl;
+    //         return;
+    //     }
+    //     p --;
+
+    // }
+
+    // // cout << "now p3 " << p << endl;
+
+    // start_x = -start_x;
+    // start_y = start_y;
+    // for(int i = start_y + 1; i <= -start_y; i ++){
+    //     if(p == n){
+    //         cout << start_x << " " << i << endl;
+    //         return;
+    //     }
+    //     p --;
+
+    // }
+
+    // cout << "now p4 " << p << endl;
+
+    // cout << "now p " << p << endl;
     
-    ans = max(ans, s1[1] + s2[1] + mx4[2] - a[0][1]);
-    ans = max(ans, s1[n] + s2[n] + mx3[n - 1] - a[1][n]);
 
-    cout << ans << endl;
     
     
 }
 
 signed main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
     int t = 1;
     cin >> t;
 

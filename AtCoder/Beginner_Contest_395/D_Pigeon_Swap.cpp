@@ -2,7 +2,6 @@
 #pragma GCC optimiez("Ofast")
  
 #include <bits/stdc++.h>
-#define int long long
 //#define pb push_back
 #define all(v) v.begin(), v.end()
 using namespace std;
@@ -46,75 +45,100 @@ template<class T>constexpr T inverse(T a, T m) { T x, y; exgcd(a, m, x, y); retu
 template<u32 P>constexpr u32 mulMod(u32 a, u32 b) { return 1ULL * a * b % P; }
 template<u64 P>constexpr u64 mulMod(u64 a, u64 b) { u64 res = a * b - u64(1.L * a * b / P - 0.5L) * P; res %= P; return res; }
 
-void solve(){
-    int n;
-    cin >> n;
+struct DSU {
+    vector<int> f, siz;
+    
+    DSU() {}
+    DSU(int n) {
+        init(n);
+    }
+    
+    void init(int n) {
+        f.resize(n);
+        iota(f.begin(), f.end(), 0);		//递增赋值
+        siz.assign(n, 1);
+    }
+    
+    int find(int x) {
+        while (x != f[x]) {
+            x = f[x] = f[f[x]];
+        }
+        return x;
+    }
+    
+    bool same(int x, int y) {
+        return find(x) == find(y);
+    }
+    
+    bool merge(int x, int y) {
+        x = find(x);
+        y = find(y);
+        if (x == y) {
+            return false;
+        }
+        siz[x] += siz[y];
+        f[y] = x;
+        return true;
+    }
+    
+    int size(int x) {
+        return siz[find(x)];
+    }
+};
 
-    vector<int> s1(n + 1), s2(n + 1);
-    vector<vector<int>> a(2, vector<int>(n + 1));
-    for(int i = 0; i < 2; i ++){
-        for(int j = 1; j <= n; j ++){
-            cin >> a[i][j];
+void solve(){
+    int n, q;
+    cin >> n >> q;
+
+    map<int, int> mp1, mp2;
+    for(int i = 1; i <= n; i ++){
+        mp1[i] = i;
+        mp2[i] = i;
+    }
+
+    while(q --){
+        int op;
+        cin >> op;
+
+        if(op == 1){
+            int a, b;
+            cin >> a >> b;
+            mp2[a] = b;
+        }
+        else if(op == 2){
+            int a, b;
+            cin >> a >> b;
+            
+            int tmp = mp1[a];
+            mp1[a] = mp1[b];
+            mp1[b] = tmp;
+
+
+        }
+        else{
+            int t;
+            cin >> t;
+            t = mp2[t];
+            int t2 = t;
+            while(mp1[t2] != t){
+                t2 = mp1[t2];
+            }
+
+            // for(auto [k, v] : mp1){
+            //     cout << k << " " << v << endl;
+
+            // }
+
+            cout << t2 << endl;
         }
     }
-    // cout << a[0]   << endl;
-    for(int i = 1; i <= n; i ++){
-        s1[i] = s1[i - 1] + a[0][i];
-    }
-    for(int i = n; i >= 1; i --){
-        s2[i] = s2[i + 1] + a[1][i];
-    }
-    // cout << s1 << endl;
-    // cout << s2 << endl;
-
-    // int mx = -1e18, mxi = -1;
-    // for(int i = 1; i <= n; i ++){
-    //     // cout << s1[i] + s2[i] << endl;
-    //     if(s1[i] + s2[i] > mx){
-    //         mx = s1[i] + s2[i];
-    //         mxi = i;
-    //     }
-    // }
-    // cout << mx << " " << mxi << endl;
-
-    vector<int> mx1(n + 2, -1e18), mx2(n + 2, -1e18);
-    vector<int> mx3(n + 2, -1e18), mx4(n + 2, -1e18);
-    for(int i = 1; i <= n; i ++){
-        // cout << -a[0][i] + a[1][i] << endl;
-        mx1[i] = max(mx1[i - 1], -a[0][i] + a[1][i]);
-        mx3[i] = max(mx3[i - 1], a[1][i]);
-    }
-    for(int i = n; i > 0; i --){
-        // cout << a[0][i] - a[1][i] << endl;
-        mx2[i] = max(mx2[i + 1], a[0][i] - a[1][i]);
-        mx4[i] = max(mx4[i + 1], a[0][i]);
-    }
-    // cout << mx1 << " " << mx2 << endl;
-
-    int ans = -1e18;
-
-    for(int i = 1; i <= n; i ++){
-        ans = max(ans, s1[i] + s2[i]);
-    }
-
-    for(int i = 2; i < n; i ++){
-        // ans = max(ans, s1[i] + s2[i]);
-        ans = max(ans, s1[i] + s2[i] + mx1[i - 1] + mx2[i + 1]);
-        ans = max(ans, s1[i] + s2[i] - a[1][i] + mx3[i - 1]);
-        ans = max(ans, s1[i] + s2[i] - a[0][i] + mx4[i + 1]);
-    }
-    
-    ans = max(ans, s1[1] + s2[1] + mx4[2] - a[0][1]);
-    ans = max(ans, s1[n] + s2[n] + mx3[n - 1] - a[1][n]);
-
-    cout << ans << endl;
-    
-    
 }
 
-signed main(){
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     while(t --){
         solve();

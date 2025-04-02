@@ -46,75 +46,125 @@ template<class T>constexpr T inverse(T a, T m) { T x, y; exgcd(a, m, x, y); retu
 template<u32 P>constexpr u32 mulMod(u32 a, u32 b) { return 1ULL * a * b % P; }
 template<u64 P>constexpr u64 mulMod(u64 a, u64 b) { u64 res = a * b - u64(1.L * a * b / P - 0.5L) * P; res %= P; return res; }
 
-void solve(){
+template<class Info>
+struct SegmentTree {
+#define mid ((l+r)/2)
     int n;
-    cin >> n;
+    std::vector<Info> node;
+    SegmentTree() : n(0) {}
+    SegmentTree(int n_, Info v_ = Info()) {
+        init(n_, v_);
+    }
+    template<class T>
+    SegmentTree(std::vector<T> init_) {
+        init(init_);
+    }
+    void init(int n_, Info v_ = Info()) {
+        init(std::vector(n_, v_));
+    }
+    template<class T>
+    void init(std::vector<T> init_) {
+        n = init_.size() - 1;
+        node.assign(4 << (int)log2(n + 1), Info());
+        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
+            if (r == l)return void(node[p] = init_[l]);
+            build(2 * p, l, mid);
+            build(2 * p + 1, mid + 1, r);
+            pushup(p);
+            };
+        build(1, 0, n);
+    }
+    void pushup(int p) {
+        node[p] = node[2 * p] + node[2 * p + 1];
+    }
+    void update(int p, int l, int r, int x, const Info& v) {
+        if (r == l)return void(node[p] = v);
+        if (x <= mid) update(2 * p, l, mid, x, v);
+        else update(2 * p + 1, mid + 1, r, x, v);
+        pushup(p);
+    }
+    void update(int p, const Info& v) {
+        update(1, 0, n, p, v);
+    }
+    Info query(int p, int l, int r, int x, int y) {
+        if (l >= x && r <= y)
+            return node[p];
+        if (y <= mid)
+            return query(2 * p, l, mid, x, y);
+        if (x > mid)
+            return query(2 * p + 1, mid + 1, r, x, y);
+        return query(2 * p, l, mid, x, y) + query(2 * p + 1, mid + 1, r, x, y);
+    }
+    Info query(int l, int r) {
+        return query(1, 0, n, l, r);
+    }
+    template<class F>
+    int findFirst(int p, int l, int r, int x, int y, F pred) {
+        if (l > y || r < x || !pred(node[p]))return -1;
+        if (r == l)return l;
+        int res = findFirst(2 * p, l, mid, x, y, pred);
+        if (res == -1)res = findFirst(2 * p + 1, mid + 1, r, x, y, pred);
+        return res;
+    }
+    template<class F>
+    int findFirst(int l, int r, F pred) {
+        return findFirst(1, 0, n, l, r, pred);
+    }
+    template<class F>
+    int findLast(int p, int l, int r, int x, int y, F pred) {
+        if (l > y || r < x || !pred(node[p]))return -1;
+        if (r == l)return l;
+        int res = findLast(2 * p + 1, mid + 1, r, x, y, pred);
+        if (res == -1) res = findLast(2 * p, l, mid, x, y, pred);
+        return res;
+    }
+    template<class F>
+    int findLast(int l, int r, F pred) {
+        return findLast(1, 0, n, l, r, pred);
+    }
+#undef mid
+};
 
-    vector<int> s1(n + 1), s2(n + 1);
-    vector<vector<int>> a(2, vector<int>(n + 1));
-    for(int i = 0; i < 2; i ++){
-        for(int j = 1; j <= n; j ++){
-            cin >> a[i][j];
+
+struct Info {
+    ll sum;
+};
+
+Info operator+(Info a, Info b) {
+    return { a.sum + b.sum };
+}
+
+
+
+void solve(){
+    int n, q;
+    cin >> n >> q;
+    vector<Info> a(n + 1);
+    for (int i = 1; i <= n; i++) cin >> a[i].sum;
+    SegmentTree<Info> seg(a);
+    while(q --){
+        int op;
+        cin >> op;
+
+        if(op == 1){
+            int l, r, k;
+            cin >> l >> r >> k;
+            seg.update(1, l, r, )
+        }
+        else{
+            int l, r;
+            cin >> l >> r;
+            cout << seg.query(l, r).sum << endl;
         }
     }
-    // cout << a[0]   << endl;
-    for(int i = 1; i <= n; i ++){
-        s1[i] = s1[i - 1] + a[0][i];
-    }
-    for(int i = n; i >= 1; i --){
-        s2[i] = s2[i + 1] + a[1][i];
-    }
-    // cout << s1 << endl;
-    // cout << s2 << endl;
-
-    // int mx = -1e18, mxi = -1;
-    // for(int i = 1; i <= n; i ++){
-    //     // cout << s1[i] + s2[i] << endl;
-    //     if(s1[i] + s2[i] > mx){
-    //         mx = s1[i] + s2[i];
-    //         mxi = i;
-    //     }
-    // }
-    // cout << mx << " " << mxi << endl;
-
-    vector<int> mx1(n + 2, -1e18), mx2(n + 2, -1e18);
-    vector<int> mx3(n + 2, -1e18), mx4(n + 2, -1e18);
-    for(int i = 1; i <= n; i ++){
-        // cout << -a[0][i] + a[1][i] << endl;
-        mx1[i] = max(mx1[i - 1], -a[0][i] + a[1][i]);
-        mx3[i] = max(mx3[i - 1], a[1][i]);
-    }
-    for(int i = n; i > 0; i --){
-        // cout << a[0][i] - a[1][i] << endl;
-        mx2[i] = max(mx2[i + 1], a[0][i] - a[1][i]);
-        mx4[i] = max(mx4[i + 1], a[0][i]);
-    }
-    // cout << mx1 << " " << mx2 << endl;
-
-    int ans = -1e18;
-
-    for(int i = 1; i <= n; i ++){
-        ans = max(ans, s1[i] + s2[i]);
-    }
-
-    for(int i = 2; i < n; i ++){
-        // ans = max(ans, s1[i] + s2[i]);
-        ans = max(ans, s1[i] + s2[i] + mx1[i - 1] + mx2[i + 1]);
-        ans = max(ans, s1[i] + s2[i] - a[1][i] + mx3[i - 1]);
-        ans = max(ans, s1[i] + s2[i] - a[0][i] + mx4[i + 1]);
-    }
-    
-    ans = max(ans, s1[1] + s2[1] + mx4[2] - a[0][1]);
-    ans = max(ans, s1[n] + s2[n] + mx3[n - 1] - a[1][n]);
-
-    cout << ans << endl;
-    
     
 }
 
-signed main(){
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     while(t --){
         solve();

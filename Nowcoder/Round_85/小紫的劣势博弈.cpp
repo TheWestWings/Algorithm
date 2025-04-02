@@ -50,71 +50,32 @@ void solve(){
     int n;
     cin >> n;
 
-    vector<int> s1(n + 1), s2(n + 1);
-    vector<vector<int>> a(2, vector<int>(n + 1));
-    for(int i = 0; i < 2; i ++){
-        for(int j = 1; j <= n; j ++){
-            cin >> a[i][j];
+    vector<int> a(n);
+    for(int i = 0; i < n; i ++){
+        cin >> a[i];
+    }
+
+    sort(all(a));
+
+    int x = 0;
+    for(int i = 0; i < n; i ++){
+        if(i % 2 == 0){
+            x += a[i];
+        }
+        else{
+            x -= a[i];
         }
     }
-    // cout << a[0]   << endl;
-    for(int i = 1; i <= n; i ++){
-        s1[i] = s1[i - 1] + a[0][i];
-    }
-    for(int i = n; i >= 1; i --){
-        s2[i] = s2[i + 1] + a[1][i];
-    }
-    // cout << s1 << endl;
-    // cout << s2 << endl;
 
-    // int mx = -1e18, mxi = -1;
-    // for(int i = 1; i <= n; i ++){
-    //     // cout << s1[i] + s2[i] << endl;
-    //     if(s1[i] + s2[i] > mx){
-    //         mx = s1[i] + s2[i];
-    //         mxi = i;
-    //     }
-    // }
-    // cout << mx << " " << mxi << endl;
-
-    vector<int> mx1(n + 2, -1e18), mx2(n + 2, -1e18);
-    vector<int> mx3(n + 2, -1e18), mx4(n + 2, -1e18);
-    for(int i = 1; i <= n; i ++){
-        // cout << -a[0][i] + a[1][i] << endl;
-        mx1[i] = max(mx1[i - 1], -a[0][i] + a[1][i]);
-        mx3[i] = max(mx3[i - 1], a[1][i]);
-    }
-    for(int i = n; i > 0; i --){
-        // cout << a[0][i] - a[1][i] << endl;
-        mx2[i] = max(mx2[i + 1], a[0][i] - a[1][i]);
-        mx4[i] = max(mx4[i + 1], a[0][i]);
-    }
-    // cout << mx1 << " " << mx2 << endl;
-
-    int ans = -1e18;
-
-    for(int i = 1; i <= n; i ++){
-        ans = max(ans, s1[i] + s2[i]);
-    }
-
-    for(int i = 2; i < n; i ++){
-        // ans = max(ans, s1[i] + s2[i]);
-        ans = max(ans, s1[i] + s2[i] + mx1[i - 1] + mx2[i + 1]);
-        ans = max(ans, s1[i] + s2[i] - a[1][i] + mx3[i - 1]);
-        ans = max(ans, s1[i] + s2[i] - a[0][i] + mx4[i + 1]);
-    }
-    
-    ans = max(ans, s1[1] + s2[1] + mx4[2] - a[0][1]);
-    ans = max(ans, s1[n] + s2[n] + mx3[n - 1] - a[1][n]);
-
-    cout << ans << endl;
-    
+    cout << x << endl;
     
 }
 
 signed main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     while(t --){
         solve();

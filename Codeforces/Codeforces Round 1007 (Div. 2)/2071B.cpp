@@ -46,74 +46,55 @@ template<class T>constexpr T inverse(T a, T m) { T x, y; exgcd(a, m, x, y); retu
 template<u32 P>constexpr u32 mulMod(u32 a, u32 b) { return 1ULL * a * b % P; }
 template<u64 P>constexpr u64 mulMod(u64 a, u64 b) { u64 res = a * b - u64(1.L * a * b / P - 0.5L) * P; res %= P; return res; }
 
+set<int> s;
+void init(){
+    int sum = 0;
+    for(int i = 1; i <= 500000; i ++){
+        sum += i;
+        if(sqrt(sum) == (int)sqrt(sum)){
+            // cout << sum << " " << sqrt(sum) << " " << i << endl;
+            s.insert(i);
+        }
+    }
+}
+
 void solve(){
+    // int s = 0;
+    // for(int i = 1 ; i < 10000; i ++){
+    //     s += i;
+    //     if(sqrt(s) == (int)sqrt(s)){
+    //         cout << s << " " << sqrt(s) << " " << i << endl;
+    //     }
+    // }
+    // cout << endl;
+
     int n;
     cin >> n;
 
-    vector<int> s1(n + 1), s2(n + 1);
-    vector<vector<int>> a(2, vector<int>(n + 1));
-    for(int i = 0; i < 2; i ++){
-        for(int j = 1; j <= n; j ++){
-            cin >> a[i][j];
+    if(s.count(n)){
+        cout << -1 << endl;
+        return;
+    }
+
+    // cout << 2 << " ";
+    for(int i = 1; i <= n; i ++){
+        if(s.count(i)){
+            cout << i + 1 << " ";
+            cout << i << " ";
+            i += 1;
+            continue;
         }
+        // if(i == 2) continue;
+        cout << i << " ";
     }
-    // cout << a[0]   << endl;
-    for(int i = 1; i <= n; i ++){
-        s1[i] = s1[i - 1] + a[0][i];
-    }
-    for(int i = n; i >= 1; i --){
-        s2[i] = s2[i + 1] + a[1][i];
-    }
-    // cout << s1 << endl;
-    // cout << s2 << endl;
-
-    // int mx = -1e18, mxi = -1;
-    // for(int i = 1; i <= n; i ++){
-    //     // cout << s1[i] + s2[i] << endl;
-    //     if(s1[i] + s2[i] > mx){
-    //         mx = s1[i] + s2[i];
-    //         mxi = i;
-    //     }
-    // }
-    // cout << mx << " " << mxi << endl;
-
-    vector<int> mx1(n + 2, -1e18), mx2(n + 2, -1e18);
-    vector<int> mx3(n + 2, -1e18), mx4(n + 2, -1e18);
-    for(int i = 1; i <= n; i ++){
-        // cout << -a[0][i] + a[1][i] << endl;
-        mx1[i] = max(mx1[i - 1], -a[0][i] + a[1][i]);
-        mx3[i] = max(mx3[i - 1], a[1][i]);
-    }
-    for(int i = n; i > 0; i --){
-        // cout << a[0][i] - a[1][i] << endl;
-        mx2[i] = max(mx2[i + 1], a[0][i] - a[1][i]);
-        mx4[i] = max(mx4[i + 1], a[0][i]);
-    }
-    // cout << mx1 << " " << mx2 << endl;
-
-    int ans = -1e18;
-
-    for(int i = 1; i <= n; i ++){
-        ans = max(ans, s1[i] + s2[i]);
-    }
-
-    for(int i = 2; i < n; i ++){
-        // ans = max(ans, s1[i] + s2[i]);
-        ans = max(ans, s1[i] + s2[i] + mx1[i - 1] + mx2[i + 1]);
-        ans = max(ans, s1[i] + s2[i] - a[1][i] + mx3[i - 1]);
-        ans = max(ans, s1[i] + s2[i] - a[0][i] + mx4[i + 1]);
-    }
-    
-    ans = max(ans, s1[1] + s2[1] + mx4[2] - a[0][1]);
-    ans = max(ans, s1[n] + s2[n] + mx3[n - 1] - a[1][n]);
-
-    cout << ans << endl;
-    
-    
+    cout << endl;
 }
 
 signed main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
     int t = 1;
+    init(); 
     cin >> t;
 
     while(t --){

@@ -2,7 +2,6 @@
 #pragma GCC optimiez("Ofast")
  
 #include <bits/stdc++.h>
-#define int long long
 //#define pb push_back
 #define all(v) v.begin(), v.end()
 using namespace std;
@@ -46,77 +45,64 @@ template<class T>constexpr T inverse(T a, T m) { T x, y; exgcd(a, m, x, y); retu
 template<u32 P>constexpr u32 mulMod(u32 a, u32 b) { return 1ULL * a * b % P; }
 template<u64 P>constexpr u64 mulMod(u64 a, u64 b) { u64 res = a * b - u64(1.L * a * b / P - 0.5L) * P; res %= P; return res; }
 
-void solve(){
-    int n;
-    cin >> n;
+int n, m, x;
+const int N = 2e5 + 10;
+vector<vector<pii>> g(N);
 
-    vector<int> s1(n + 1), s2(n + 1);
-    vector<vector<int>> a(2, vector<int>(n + 1));
-    for(int i = 0; i < 2; i ++){
-        for(int j = 1; j <= n; j ++){
-            cin >> a[i][j];
+typedef long long ll;
+const ll INF = 1e18;
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
+    int n, m, X;
+    cin >> n >> m >> X;
+    
+    // 构造两个图：graph[0] 为原图，graph[1] 为翻转图
+    vector<vector<int>> graph[2];
+    graph[0].resize(n + 1);
+    graph[1].resize(n + 1);
+    
+    for(int i = 0; i < m; i++){
+        int u, v;
+        cin >> u >> v;
+        graph[0][u].push_back(v);
+        // 翻转图中 u 和 v 互换
+        graph[1][v].push_back(u);
+    }
+    
+    // 状态 (vertex, s)
+    // dist[s][v] 表示到达顶点 v 且当前状态 s 的最小花费
+    vector<vector<ll>> dist(2, vector<ll>(n + 1, INF));
+    // 初始状态：(1, 0)
+    dist[0][1] = 0;
+    // 用优先队列 Dijkstra
+    // 元素为 (cost, vertex, state)
+    typedef tuple<ll, int, int> State;
+    priority_queue<State, vector<State>, greater<State>> pq;
+    pq.push({0, 1, 0});
+    
+    while(!pq.empty()){
+        auto [d, u, s] = pq.top();
+        pq.pop();
+        if(d != dist[s][u]) continue;
+        // 操作1：移动
+        for(auto v : graph[s][u]){
+            if(dist[s][v] > dist[s][u] + 1){
+                dist[s][v] = dist[s][u] + 1;
+                pq.push({dist[s][v], v, s});
+            }
+        }
+        // 操作2：翻转
+        int ns = 1 - s;
+        if(dist[ns][u] > dist[s][u] + X){
+            dist[ns][u] = dist[s][u] + X;
+            pq.push({dist[ns][u], u, ns});
         }
     }
-    // cout << a[0]   << endl;
-    for(int i = 1; i <= n; i ++){
-        s1[i] = s1[i - 1] + a[0][i];
-    }
-    for(int i = n; i >= 1; i --){
-        s2[i] = s2[i + 1] + a[1][i];
-    }
-    // cout << s1 << endl;
-    // cout << s2 << endl;
-
-    // int mx = -1e18, mxi = -1;
-    // for(int i = 1; i <= n; i ++){
-    //     // cout << s1[i] + s2[i] << endl;
-    //     if(s1[i] + s2[i] > mx){
-    //         mx = s1[i] + s2[i];
-    //         mxi = i;
-    //     }
-    // }
-    // cout << mx << " " << mxi << endl;
-
-    vector<int> mx1(n + 2, -1e18), mx2(n + 2, -1e18);
-    vector<int> mx3(n + 2, -1e18), mx4(n + 2, -1e18);
-    for(int i = 1; i <= n; i ++){
-        // cout << -a[0][i] + a[1][i] << endl;
-        mx1[i] = max(mx1[i - 1], -a[0][i] + a[1][i]);
-        mx3[i] = max(mx3[i - 1], a[1][i]);
-    }
-    for(int i = n; i > 0; i --){
-        // cout << a[0][i] - a[1][i] << endl;
-        mx2[i] = max(mx2[i + 1], a[0][i] - a[1][i]);
-        mx4[i] = max(mx4[i + 1], a[0][i]);
-    }
-    // cout << mx1 << " " << mx2 << endl;
-
-    int ans = -1e18;
-
-    for(int i = 1; i <= n; i ++){
-        ans = max(ans, s1[i] + s2[i]);
-    }
-
-    for(int i = 2; i < n; i ++){
-        // ans = max(ans, s1[i] + s2[i]);
-        ans = max(ans, s1[i] + s2[i] + mx1[i - 1] + mx2[i + 1]);
-        ans = max(ans, s1[i] + s2[i] - a[1][i] + mx3[i - 1]);
-        ans = max(ans, s1[i] + s2[i] - a[0][i] + mx4[i + 1]);
-    }
     
-    ans = max(ans, s1[1] + s2[1] + mx4[2] - a[0][1]);
-    ans = max(ans, s1[n] + s2[n] + mx3[n - 1] - a[1][n]);
-
-    cout << ans << endl;
-    
-    
-}
-
-signed main(){
-    int t = 1;
-    cin >> t;
-
-    while(t --){
-        solve();
-    }
+    ll ans = min(dist[0][n], dist[1][n]);
+    cout << ans << "\n";
+    return 0;
 }
